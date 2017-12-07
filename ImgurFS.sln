@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2009
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ImgurFS", "ImgurFS\ImgurFS.fsproj", "{EAD0158C-189E-4794-99EB-714092448966}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EAD0158C-189E-4794-99EB-714092448966}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAD0158C-189E-4794-99EB-714092448966}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAD0158C-189E-4794-99EB-714092448966}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAD0158C-189E-4794-99EB-714092448966}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6CEB62F3-E4B0-4C02-B50D-705332D5033B}
+	EndGlobalSection
+EndGlobal
