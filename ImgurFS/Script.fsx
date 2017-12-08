@@ -30,6 +30,7 @@ let sanitizeAlbumName name =
 
     name |> String.filter(fun c -> not(invalidChars |> Seq.exists(fun x -> x = c)))
                 
+let inline last (arr:_[]) = arr.[arr.Length - 1]
 
 let downloadAlbum albumHash =
     let url = sprintf "https://api.imgur.com/3/album/%s" albumHash
@@ -51,6 +52,7 @@ let downloadAlbum albumHash =
 let albumLines = File.ReadAllLines @"c:\temp\tdd.txt" 
 albumLines 
 |> Array.filter(fun line -> not(System.String.IsNullOrWhiteSpace line))
+|> Array.map(fun (line:string) -> Array.last(line.Split('/')))
 |> Array.indexed 
 |> Array.iter(fun (idx, album) -> printfn "downloading %s... (%d / %d)" album (idx + 1) albumLines.Length 
                                   downloadAlbum album)
