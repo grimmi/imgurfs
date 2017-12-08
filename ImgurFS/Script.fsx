@@ -6,7 +6,7 @@ open System.IO
 let clientID = "c053e70b0e9d647"
 
 let saveStream (targetPath:string) (fileName:string) (index:int) (response:HttpResponseWithStream) =
-    let name = sprintf "%03i - %s" index (fileName.Split('/').[3])
+    let name = sprintf "%03i - %s" index (Array.last (fileName.Split('/')))
     let targetFile = Path.Combine(targetPath, name)
     use saveStream = File.Create(targetFile)
     response.ResponseStream.CopyTo(saveStream)
@@ -54,9 +54,10 @@ let downloadAlbum albumHash =
 
         
 let albumLines = File.ReadAllLines @"c:\temp\tdd.txt"
-albumLines 
-|> Array.filter(fun line -> not(System.String.IsNullOrWhiteSpace line))
-|> Array.map(fun (line:string) -> Array.last(line.Split('/')))
-|> Array.indexed 
-|> Array.iter(fun (idx, album) -> printfn "downloading %s... (%d / %d)" album (idx + 1) 1 //albumLines.Length 
+let albums = albumLines 
+             |> Array.filter(fun line -> not(line.StartsWith "#") && not(System.String.IsNullOrWhiteSpace line))
+             |> Array.map(fun (line:string) -> Array.last(line.Split('/')))
+             |> Array.indexed 
+albums
+|> Array.iter(fun (idx, album) -> printfn "downloading %s... (%d / %d)" album (idx + 1) albums.Length 
                                   downloadAlbum album)
