@@ -12,7 +12,7 @@ let saveStream (targetPath:string) (fileName:string) (index:int) (response:HttpR
     response.ResponseStream.CopyTo(saveStream)
     printfn "%s" targetFile
 
-let downloadImages targetPath (images : seq<int * string>) =
+let downloadImages targetPath (images : seq<string>) =
     
     if not (Directory.Exists targetPath) then (Directory.CreateDirectory(targetPath) |> ignore)
 
@@ -20,10 +20,10 @@ let downloadImages targetPath (images : seq<int * string>) =
     let mutable counter = 1
 
     images
-    |>Seq.map(fun (idx, image) -> (idx, image, Http.RequestStream(image, httpMethod = "GET")))
-    |>Seq.iter(fun (idx, image, stream) -> printf "[%d / %d]" counter imageLength
-                                           counter <- counter + 1
-                                           saveStream targetPath image idx stream)
+    |>Seq.map(fun image -> (image, Http.RequestStream(image, httpMethod = "GET")))
+    |>Seq.iter(fun (image, stream) -> printf "[%d / %d]" counter imageLength
+                                      counter <- counter + 1
+                                      saveStream targetPath image counter stream)
 
 let sanitizeAlbumName name =
     let invalidChars = Array.concat [|Path.GetInvalidFileNameChars();Path.GetInvalidPathChars()|]
@@ -42,9 +42,9 @@ let downloadAlbum albumHash =
 
     let albumName = (data.GetProperty "title").AsString() |> sanitizeAlbumName
     
-    let dataElements = (data.GetProperty "images").AsArray() |> Array.indexed
+    let dataElements = (data.GetProperty "images").AsArray()
 
-    let links = dataElements |> Array.map(fun (idx, d) -> (idx, (d.GetProperty "link").AsString()))
+    let links = dataElements |> Array.map(fun d -> (d.GetProperty "link").AsString())
 
     links |> downloadImages (sprintf @"c:\temp\fsdownloadr\%s" albumName)
         
