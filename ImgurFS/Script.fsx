@@ -1,16 +1,9 @@
-﻿// Learn more about F# at http://fsharp.org. See the 'F# Tutorial' project
-// for more guidance on F# programming.
-
-//#load "Library1.fs"
-//open ImgurFS
-#r @"F:\Git Repos\imgurfs\packages\FSharp.Data.2.4.3\lib\net45\FSharp.Data.dll"
+﻿#r @"F:\Git Repos\imgurfs\packages\FSharp.Data.2.4.3\lib\net45\FSharp.Data.dll"
 open FSharp.Data
 open System
 open System.IO
 
-type Album = { images : seq<string> }
-
-let clientID = ""
+let clientID = "c053e70b0e9d647"
 
 let saveStream (targetPath:string) (fileName:string) (index:int) (response:HttpResponseWithStream) =
     let name = sprintf "%03i - %s" index (fileName.Split('/').[3])
@@ -55,9 +48,6 @@ let downloadAlbum albumHash =
 
     links |> downloadImages (sprintf @"c:\temp\fsdownloadr\%s" albumName)
         
-
-//downloadAlbum "Td5Dw"
-
 let albumLines = File.ReadAllLines @"c:\temp\tdd.txt" 
 albumLines 
 |> Array.filter(fun line -> not(System.String.IsNullOrWhiteSpace line))
