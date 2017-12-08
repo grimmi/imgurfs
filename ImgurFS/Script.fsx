@@ -42,17 +42,21 @@ let downloadAlbum albumHash =
     let data = albumJson.GetProperty "data"
 
     let albumName = (data.GetProperty "title").AsString() |> sanitizeAlbumName
+    let downloadName = match albumName with
+                       |"" | null -> albumHash
+                       |_ -> albumName
     
     let dataElements = (data.GetProperty "images").AsArray()
 
     let links = dataElements |> Array.map(fun d -> (d.GetProperty "link").AsString())
 
-    links |> downloadImages (sprintf @"c:\temp\fsdownloadr\%s" albumName)
+    links |> downloadImages (sprintf @"c:\temp\fsdownloadr\%s" downloadName)
+
         
-let albumLines = File.ReadAllLines @"c:\temp\tdd.txt" 
+let albumLines = File.ReadAllLines @"c:\temp\tdd.txt"
 albumLines 
 |> Array.filter(fun line -> not(System.String.IsNullOrWhiteSpace line))
 |> Array.map(fun (line:string) -> Array.last(line.Split('/')))
 |> Array.indexed 
-|> Array.iter(fun (idx, album) -> printfn "downloading %s... (%d / %d)" album (idx + 1) albumLines.Length 
+|> Array.iter(fun (idx, album) -> printfn "downloading %s... (%d / %d)" album (idx + 1) 1 //albumLines.Length 
                                   downloadAlbum album)
