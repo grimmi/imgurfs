@@ -10,16 +10,16 @@ open System.IO
 
 type Album = { images : seq<string> }
 
-let clientID = "<yourclientid>"
+let clientID = ""
 
-let saveStream (targetPath:string) (fileName:string) (response:HttpResponseWithStream) =
-    let name = fileName.Split('/').[3]
+let saveStream (targetPath:string) (fileName:string) (index:int) (response:HttpResponseWithStream) =
+    let name = sprintf "%03i - %s" index (fileName.Split('/').[3])
     let targetFile = Path.Combine(targetPath, name)
     use saveStream = File.Create(targetFile)
     response.ResponseStream.CopyTo(saveStream)
     printfn "%s" targetFile
 
-let downloadImages targetPath (images : seq<string>) =
+let downloadImages targetPath (images : seq<int * string>) =
     
     if not (Directory.Exists targetPath) then (Directory.CreateDirectory(targetPath) |> ignore)
 
@@ -27,10 +27,10 @@ let downloadImages targetPath (images : seq<string>) =
     let mutable counter = 1
 
     images
-    |>Seq.map(fun image -> (image, Http.RequestStream(image, httpMethod = "GET")))
-    |>Seq.iter(fun (image, stream) -> printf "[%d / %d]" counter imageLength
-                                      counter <- counter + 1
-                                      saveStream targetPath image stream)
+    |>Seq.map(fun (idx, image) -> (idx, image, Http.RequestStream(image, httpMethod = "GET")))
+    |>Seq.iter(fun (idx, image, stream) -> printf "[%d / %d]" counter imageLength
+                                           counter <- counter + 1
+                                           saveStream targetPath image idx stream)
 
 let sanitizeAlbumName name =
     let invalidChars = Array.concat [|Path.GetInvalidFileNameChars();Path.GetInvalidPathChars()|]
@@ -49,12 +49,14 @@ let downloadAlbum albumHash =
 
     let albumName = (data.GetProperty "title").AsString() |> sanitizeAlbumName
     
-    let dataElements = (data.GetProperty "images").AsArray()
+    let dataElements = (data.GetProperty "images").AsArray() |> Array.indexed
 
-    let links = dataElements |> Array.map(fun d -> (d.GetProperty "link").AsString())
+    let links = dataElements |> Array.map(fun (idx, d) -> (idx, (d.GetProperty "link").AsString()))
 
     links |> downloadImages (sprintf @"c:\temp\fsdownloadr\%s" albumName)
         
+
+//downloadAlbum "Td5Dw"
 
 let albumLines = File.ReadAllLines @"c:\temp\tdd.txt" 
 albumLines 
