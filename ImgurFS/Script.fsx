@@ -22,8 +22,8 @@ let downloadImages targetPath (images : seq<string>) =
     images
     |>Seq.map(fun image -> (image, Http.RequestStream(image, httpMethod = "GET")))
     |>Seq.iter(fun (image, stream) -> printf "[%d / %d]" counter imageLength
-                                      counter <- counter + 1
-                                      saveStream targetPath image counter stream)
+                                      saveStream targetPath image counter stream
+                                      counter <- counter + 1)
 
 let sanitizeAlbumName name =
     let invalidChars = Array.concat [|Path.GetInvalidFileNameChars();Path.GetInvalidPathChars()|]
