@@ -54,8 +54,8 @@ let DownloadAlbumsFromFile targetFolder sourceFile =
     let sourceLines = File.ReadAllLines sourceFile 
                       |> Array.map(fun line -> line.Trim()) 
                       |> Array.filter(fun line -> not(line.StartsWith "#") && not(Seq.isEmpty line))
-    sourceLines |> Array.mapi(fun idx (line:string) -> (idx, Array.last(line.Split('/'))))
-                |> Array.iter(fun (idx, hash) -> printfn "[%d / %d] processing %s..." idx sourceLines.Length hash
-                                                 DownloadAlbum hash targetFolder)
+    sourceLines |> Array.map(fun (line:string) -> Array.last(line.Split('/')))
+                |> Array.iteri(fun idx hash -> printfn "[%d / %d] processing %s..." idx sourceLines.Length hash
+                                               DownloadAlbum hash targetFolder)
 
 @"c:\temp\tdd.txt" |> DownloadAlbumsFromFile @"c:\temp\fsdownloadr"
