@@ -9,8 +9,7 @@ let SaveStreamFromHttpResponse (filePath:string) (response:HttpResponseWithStrea
     use saveStream = File.Create(filePath)
     response.ResponseStream.CopyTo(saveStream)
 
-let CleanAlbumName name =
-    name |> String.filter(fun c -> not(invalidChars |> Seq.exists(fun x -> x = c)))
+let CleanAlbumName = String.filter(fun c -> not(invalidChars |> Seq.exists(fun x -> x = c)))
                 
 let inline last (arr:_[]) = arr.[arr.Length - 1]
 
