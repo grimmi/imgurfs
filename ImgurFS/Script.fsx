@@ -3,7 +3,7 @@ open FSharp.Data
 open System
 open System.IO
 
-let clientID = "c053e70b0e9d647"
+let clientID = File.ReadAllLines @"c:\temp\tdd.txt" |> Seq.head |> String.filter(fun c -> not(c.Equals('#')))
 
 let saveStream (targetPath:string) (fileName:string) (index:int) (response:HttpResponseWithStream) =
     let name = sprintf "%03i - %s" index (Array.last (fileName.Split('/')))
