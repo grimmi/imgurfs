@@ -30,29 +30,30 @@ let MakeDownloadPath targetPath (album : JsonValue) =
 let MakeImageName (link:string) (index:int) =
     sprintf "%03i - %s" index (Array.last (link.Split('/')))
 
+let DownloadImage link downloadPath =
+    let response = Http.RequestStream(link, httpMethod = "GET")
+    SaveStreamFromHttpResponse downloadPath response
+
 let DownloadImages targetPath (albumLinks : JsonValue * string[]) =
     let album, links = albumLinks
     let downloadFolder = MakeDownloadPath targetPath album
-    let mutable counter = 1
-    links |>Seq.iter(fun link -> let response = Http.RequestStream(link, httpMethod = "GET")
-                                 let imagePath = Path.Combine(downloadFolder, (MakeImageName link counter))
-                                 printfn "[%d / %d] %s" counter links.Length imagePath
-                                 SaveStreamFromHttpResponse imagePath response
-                                 counter <- counter + 1)
+    links |>Seq.iteri(fun idx link -> let imagePath = Path.Combine(downloadFolder, (MakeImageName link idx))
+                                      DownloadImage link imagePath
+                                      printfn "[%d / %d] %s" idx links.Length imagePath)
 let DownloadAlbumData url =
     (Http.RequestString(url, httpMethod = "GET", headers = [ "Authorization", sprintf "Client-ID %s" clientID ])
      |>JsonValue.Parse).GetProperty "data"
 
-let downloadAlbum albumHash targetFolder=
+let DownloadAlbum albumHash targetFolder=
     sprintf "https://api.imgur.com/3/album/%s" albumHash 
     |> DownloadAlbumData
     |> GetImageLinksOfAlbum
     |> DownloadImages targetFolder
         
-let albums = File.ReadAllLines @"c:\temp\tdd.txt"
-             |> Array.filter(fun line -> not(line.StartsWith "#") && not(System.String.IsNullOrWhiteSpace line))
-             |> Array.map(fun (line:string) -> Array.last(line.Split('/')))
-             |> Array.indexed 
-albums
-|> Array.iter(fun (idx, album) -> printfn "downloading %s... (%d / %d)" album (idx + 1) albums.Length 
-                                  downloadAlbum album @"c:\temp\fsdownloadr\")
+let DownloadAlbumsFromFile targetFolder sourceFile =
+    let sourceLines = File.ReadAllLines sourceFile |> Array.filter(fun line -> not(line.StartsWith "#") && not(line.Trim().Length = 0))
+    sourceLines |> Array.map(fun (line:string) -> Array.last(line.Split('/'))) |> Array.indexed
+                |> Array.iter(fun (idx, hash) -> printfn "[%d / %d] processing %s..." idx sourceLines.Length hash
+                                                 DownloadAlbum hash targetFolder)
+
+@"c:\temp\tdd.txt" |> DownloadAlbumsFromFile @"c:\temp\fsdownloadr"
