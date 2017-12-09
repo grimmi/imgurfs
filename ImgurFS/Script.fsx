@@ -21,7 +21,7 @@ let downloadImages targetPath (images : seq<string>) =
 
     images
     |>Seq.map(fun image -> (image, Http.RequestStream(image, httpMethod = "GET")))
-    |>Seq.iter(fun (image, stream) -> printf "[%d / %d]" counter imageLength
+    |>Seq.iter(fun (image, stream) -> printf "[%d / %d] " counter imageLength
                                       saveStream targetPath image counter stream
                                       counter <- counter + 1)
 
@@ -51,10 +51,8 @@ let downloadAlbum albumHash =
     let links = dataElements |> Array.map(fun d -> (d.GetProperty "link").AsString())
 
     links |> downloadImages (sprintf @"c:\temp\fsdownloadr\%s" downloadName)
-
         
-let albumLines = File.ReadAllLines @"c:\temp\tdd.txt"
-let albums = albumLines 
+let albums = File.ReadAllLines @"c:\temp\tdd.txt"
              |> Array.filter(fun line -> not(line.StartsWith "#") && not(System.String.IsNullOrWhiteSpace line))
              |> Array.map(fun (line:string) -> Array.last(line.Split('/')))
              |> Array.indexed 
