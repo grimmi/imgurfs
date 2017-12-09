@@ -51,11 +51,11 @@ let DownloadAlbum albumHash targetFolder=
     |> DownloadImages targetFolder
         
 let DownloadAlbumsFromFile targetFolder sourceFile =
-    let sourceLines = File.ReadAllLines sourceFile 
+    let albumHashes = File.ReadAllLines sourceFile 
                       |> Array.map(fun line -> line.Trim()) 
-                      |> Array.filter(fun line -> not(line.StartsWith "#") && not(Seq.isEmpty line))
-    sourceLines |> Array.map(fun (line:string) -> Array.last(line.Split('/')))
-                |> Array.iteri(fun idx hash -> printfn "[%d / %d] processing %s..." idx sourceLines.Length hash
+                      |> Array.filter(fun line -> not(line.StartsWith "#" || Seq.isEmpty line))
+                      |> Array.map(fun (line:string) -> Array.last(line.Split('/')))
+    albumHashes |> Array.iteri(fun idx hash -> printfn "[%d / %d] processing %s..." idx albumHashes.Length hash
                                                DownloadAlbum hash targetFolder)
 
 @"c:\temp\tdd.txt" |> DownloadAlbumsFromFile @"c:\temp\fsdownloadr"
