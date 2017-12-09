@@ -1,4 +1,5 @@
-﻿#r @"F:\Git Repos\imgurfs\packages\FSharp.Data.2.4.3\lib\net45\FSharp.Data.dll"
+﻿open FSharp.Data
+#r @"F:\Git Repos\imgurfs\packages\FSharp.Data.2.4.3\lib\net45\FSharp.Data.dll"
 open FSharp.Data
 open System
 open System.IO
@@ -32,25 +33,19 @@ let sanitizeAlbumName name =
                 
 let inline last (arr:_[]) = arr.[arr.Length - 1]
 
-let downloadAlbum albumHash =
+let downloadAlbum albumHash targetFolder=
     let url = sprintf "https://api.imgur.com/3/album/%s" albumHash
     
-    let albumString = Http.RequestString(url, httpMethod = "GET", headers = [ "Authorization", sprintf "Client-ID %s" clientID ])
+    let album = (Http.RequestString(url, httpMethod = "GET", headers = [ "Authorization", sprintf "Client-ID %s" clientID ])
+                 |>JsonValue.Parse).GetProperty "data"
+
+    let albumName = match (album.GetProperty "title").AsString() |> sanitizeAlbumName with
+                    |"" | null -> albumHash
+                    |name -> name
     
-    let albumJson = JsonValue.Parse albumString
-
-    let data = albumJson.GetProperty "data"
-
-    let albumName = (data.GetProperty "title").AsString() |> sanitizeAlbumName
-    let downloadName = match albumName with
-                       |"" | null -> albumHash
-                       |_ -> albumName
-    
-    let dataElements = (data.GetProperty "images").AsArray()
-
-    let links = dataElements |> Array.map(fun d -> (d.GetProperty "link").AsString())
-
-    links |> downloadImages (sprintf @"c:\temp\fsdownloadr\%s" downloadName)
+    (album.GetProperty "images").AsArray()
+    |> Array.map(fun d -> (d.GetProperty "link").AsString())
+    |> downloadImages (Path.Combine(targetFolder, albumName))
         
 let albums = File.ReadAllLines @"c:\temp\tdd.txt"
              |> Array.filter(fun line -> not(line.StartsWith "#") && not(System.String.IsNullOrWhiteSpace line))
@@ -58,4 +53,4 @@ let albums = File.ReadAllLines @"c:\temp\tdd.txt"
              |> Array.indexed 
 albums
 |> Array.iter(fun (idx, album) -> printfn "downloading %s... (%d / %d)" album (idx + 1) albums.Length 
-                                  downloadAlbum album)
+                                  downloadAlbum album @"c:\temp\fsdownloader\")
