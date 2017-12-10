@@ -36,7 +36,7 @@ let DownloadImages targetPath (albumLinks : JsonValue * string[]) =
     let downloadFolder = MakeDownloadPath targetPath album
     links |> Seq.iteri(fun idx link -> let imagePath = Path.Combine(downloadFolder, (MakeImageName link idx))
                                        DownloadImage link imagePath
-                                       printfn "[%d / %d] %s" idx links.Length imagePath)
+                                       printfn "[%d / %d] %s" (idx + 1) links.Length imagePath)
 
 let DownloadAlbumData url =
     (Http.RequestString(url, httpMethod = "GET", headers = [ "Authorization", sprintf "Client-ID %s" clientID ])
@@ -53,7 +53,7 @@ let DownloadAlbumsFromFile targetFolder sourceFile =
                       |> Array.map(fun line -> line.Trim()) 
                       |> Array.filter(fun line -> not(line.StartsWith "#" || Seq.isEmpty line))
                       |> Array.map(fun (line:string) -> Array.last(line.Split('/')))
-    albumHashes |> Array.iteri(fun idx hash -> printfn "[%d / %d] processing %s..." idx albumHashes.Length hash
+    albumHashes |> Array.iteri(fun idx hash -> printfn "[%d / %d] processing %s..." (idx + 1) albumHashes.Length hash
                                                DownloadAlbum hash targetFolder)
 
 @"c:\temp\tdd.txt" |> DownloadAlbumsFromFile @"c:\temp\fsdownloadr"
