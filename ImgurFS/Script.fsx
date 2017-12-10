@@ -1,4 +1,4 @@
-﻿#r @"F:\Git Repos\imgurfs\packages\FSharp.Data.2.4.3\lib\net45\FSharp.Data.dll"
+﻿#r @"..\packages\FSharp.Data.2.4.3\lib\net45\FSharp.Data.dll"
 open FSharp.Data
 open System.IO
 
@@ -11,11 +11,8 @@ let SaveStreamFromHttpResponse (filePath:string) (response:HttpResponseWithStrea
 
 let CleanAlbumName = String.filter(fun c -> not(invalidChars |> Seq.exists(fun x -> x = c)))
                 
-let inline last (arr:_[]) = arr.[arr.Length - 1]
-
 let GetImageLinksOfAlbum (album:JsonValue) =
-    (album, (album.GetProperty "images").AsArray()
-             |>Array.map(fun img -> (img.GetProperty "link").AsString()))
+    (album, (album.GetProperty "images").AsArray() |> Array.map(fun img -> (img.GetProperty "link").AsString()))
 
 let GetAlbumNameOrId (album:JsonValue) =
     match (album.GetProperty "title").AsString() |> CleanAlbumName with
@@ -37,12 +34,13 @@ let DownloadImage link downloadPath =
 let DownloadImages targetPath (albumLinks : JsonValue * string[]) =
     let album, links = albumLinks
     let downloadFolder = MakeDownloadPath targetPath album
-    links |>Seq.iteri(fun idx link -> let imagePath = Path.Combine(downloadFolder, (MakeImageName link idx))
-                                      DownloadImage link imagePath
-                                      printfn "[%d / %d] %s" idx links.Length imagePath)
+    links |> Seq.iteri(fun idx link -> let imagePath = Path.Combine(downloadFolder, (MakeImageName link idx))
+                                       DownloadImage link imagePath
+                                       printfn "[%d / %d] %s" idx links.Length imagePath)
+
 let DownloadAlbumData url =
     (Http.RequestString(url, httpMethod = "GET", headers = [ "Authorization", sprintf "Client-ID %s" clientID ])
-     |>JsonValue.Parse).GetProperty "data"
+     |> JsonValue.Parse).GetProperty "data"
 
 let DownloadAlbum albumHash targetFolder=
     sprintf "https://api.imgur.com/3/album/%s" albumHash 
@@ -51,11 +49,11 @@ let DownloadAlbum albumHash targetFolder=
     |> DownloadImages targetFolder
         
 let DownloadAlbumsFromFile targetFolder sourceFile =
-    let sourceLines = File.ReadAllLines sourceFile 
+    let albumHashes = File.ReadAllLines sourceFile 
                       |> Array.map(fun line -> line.Trim()) 
-                      |> Array.filter(fun line -> not(line.StartsWith "#") && not(Seq.isEmpty line))
-    sourceLines |> Array.mapi(fun idx (line:string) -> (idx, Array.last(line.Split('/'))))
-                |> Array.iter(fun (idx, hash) -> printfn "[%d / %d] processing %s..." idx sourceLines.Length hash
-                                                 DownloadAlbum hash targetFolder)
+                      |> Array.filter(fun line -> not(line.StartsWith "#" || Seq.isEmpty line))
+                      |> Array.map(fun (line:string) -> Array.last(line.Split('/')))
+    albumHashes |> Array.iteri(fun idx hash -> printfn "[%d / %d] processing %s..." idx albumHashes.Length hash
+                                               DownloadAlbum hash targetFolder)
 
 @"c:\temp\tdd.txt" |> DownloadAlbumsFromFile @"c:\temp\fsdownloadr"
