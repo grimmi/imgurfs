@@ -20,24 +20,29 @@ module ClipboardWatcher =
         static extern int SendMessage(IntPtr hwnd, int wMsg, IntPtr wParam, IntPtr lParam)
 
         let mutable nextClipboardViewer : IntPtr = IntPtr.Zero
-
-        do nextClipboardViewer <- SetClipboardViewer(base.Handle |> int) |> IntPtr
         
-        let CheckForImgurUrl (url:string) =
+        let CheckForImgurUrl (url:string)=
+            printfn "checking '%s'..." url
             if url.ToLower().StartsWith("http") && url.ToLower().Contains("imgur.com") then
+                printfn "it's an imgur.com url!"
                 url
-            else ""
+            else 
+                ""
 
         let ExtractAlbumHashFromUrl (url:string) =
             Array.last(url.Split('/'))
 
         let ReactToClipboard =
             match CheckForImgurUrl(Clipboard.GetText()) with
+            |"" -> ()
             |url -> url |> ExtractAlbumHashFromUrl |> DownloadAlbum @"c:\temp\fsdownloadr"
 
         override this.WndProc(message : System.Windows.Forms.Message byref) =
             match message.Msg with
             |0x0308 -> ReactToClipboard
-                       SendMessage(nextClipboardViewer, message.Msg, message.WParam, message.LParam) |> ignore
+                       //SendMessage(nextClipboardViewer, message.Msg, message.WParam, message.LParam) |> ignore
             |_ -> ()
+
+        //member public this.Init() =
+           //nextClipboardViewer <- SetClipboardViewer(base.Handle |> int) |> IntPtr 
         
