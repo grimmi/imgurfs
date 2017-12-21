@@ -41,6 +41,7 @@ let DownloadImages targetPath (albumLinks : JsonValue * string[]) =
     links |> Seq.iteri(fun idx link -> let imagePath = Path.Combine(downloadFolder, (MakeImageName link idx))
                                        DownloadImage link imagePath
                                        printfn "[%d / %d] %s" (idx + 1) links.Length imagePath)
+    (GetAlbumNameOrId album, Seq.length links)
 
 let DownloadAlbumData url =
     (Http.RequestString(url, httpMethod = "GET", headers = [ "Authorization", sprintf "Client-ID %s" clientID ])
@@ -58,4 +59,4 @@ let DownloadAlbumsFromFile targetFolder sourceFile =
                       |> Array.filter(fun line -> not(line.StartsWith "#" || Seq.isEmpty line))
                       |> Array.map(fun (line:string) -> Array.last(line.Split('/')))
     albumHashes |> Array.iteri(fun idx hash -> printfn "[%d / %d] processing %s..." (idx + 1) albumHashes.Length hash
-                                               DownloadAlbum hash targetFolder)
+                                               DownloadAlbum hash targetFolder |> ignore)
