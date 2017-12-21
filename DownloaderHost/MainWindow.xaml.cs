@@ -7,12 +7,10 @@ namespace DownloaderHost
     /// </summary>
     public partial class MainWindow : Window
     {
-        private ClipboardMonitor monitor;
-
         public MainWindow()
         {
+            DataContext = new MainWindowViewModel();
             InitializeComponent();
-            monitor = new ClipboardMonitor();
         }
     }
 }
