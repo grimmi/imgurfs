@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.27004.2009
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ImgurFS", "ImgurFS\ImgurFS.fsproj", "{EAD0158C-189E-4794-99EB-714092448966}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DownloaderHost", "DownloaderHost\DownloaderHost.csproj", "{47A14FA6-C741-4B73-B2F1-C0C7991760A0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DownloaderHost", "DownloaderHost\DownloaderHost.csproj", "{055FD2B0-E3F8-4859-91C8-4EABC18020DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{EAD0158C-189E-4794-99EB-714092448966}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EAD0158C-189E-4794-99EB-714092448966}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EAD0158C-189E-4794-99EB-714092448966}.Release|Any CPU.Build.0 = Release|Any CPU
-		{47A14FA6-C741-4B73-B2F1-C0C7991760A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{47A14FA6-C741-4B73-B2F1-C0C7991760A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{47A14FA6-C741-4B73-B2F1-C0C7991760A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{47A14FA6-C741-4B73-B2F1-C0C7991760A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{055FD2B0-E3F8-4859-91C8-4EABC18020DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{055FD2B0-E3F8-4859-91C8-4EABC18020DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{055FD2B0-E3F8-4859-91C8-4EABC18020DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{055FD2B0-E3F8-4859-91C8-4EABC18020DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
