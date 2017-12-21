@@ -3,6 +3,8 @@ using ImgurFS;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -14,13 +16,13 @@ namespace DownloaderHost
 {
     public class MainWindowViewModel
     {
-        public ObservableCollection<string> DownloadsInProgress { get; } = new ObservableCollection<string>();
-        public ObservableCollection<string> FinishedDownloads { get; } = new ObservableCollection<string>();
+        public ObservableCollection<AlbumDownloadViewModel> Downloads { get; } = new ObservableCollection<AlbumDownloadViewModel>();
 
         private List<Task> runningTasks = new List<Task>();
         private Notifier notifier;
 
         public string DownloadPath { get; set; } = @"c:\temp\downloader";
+        public AlbumDownloadViewModel SelectedDownload { get; set; }
 
         public MainWindowViewModel()
         {
@@ -41,19 +43,29 @@ namespace DownloaderHost
             });
         }
 
+        public void OpenFolder()
+        {
+            if(SelectedDownload == null)
+            {
+                return;
+            }
+            var path = Path.Combine(DownloadPath, SelectedDownload.AlbumName);
+            Process.Start(path);
+        }
+
         public void ReactToClipboardChange()
         {
             var clipboardText = Clipboard.GetText();
-            if(!DownloadsInProgress.Contains(clipboardText) && IsImgurAlbumUrl(clipboardText))
+            if (!Downloads.Any(dl => clipboardText.Contains(dl.AlbumUrl)) && IsImgurAlbumUrl(clipboardText))
             {
-                DownloadsInProgress.Add(clipboardText);
                 var albumHash = clipboardText.Split('/').Last();
-                var albumTask = Task.Run(() => 
+                var downloadTask = Task.Run(() =>
                 {
                     var result = AlbumDownloader.DownloadAlbum(albumHash, DownloadPath);
-                    return (albumHash: albumHash, albumName: result.Item1, imageCount: result.Item2);
+                    return (albumName: result.Item1, imageCount: result.Item2);
                 });
-                albumTask.ContinueWith(NotifyCompletion);
+                var model = new AlbumDownloadViewModel(albumHash, downloadTask, NotifyCompletion);
+                Downloads.Add(model);
                 ShowToast(clipboardText);
             }
         }
@@ -63,26 +75,16 @@ namespace DownloaderHost
             notifier.ShowDownloadNotification(dlUrl);
         }
 
-        private void NotifyCompletion(Task<(string albumHash, string albumName, int imageCount)> t)
+        private void NotifyCompletion(AlbumDownloadViewModel albumDownload)
         {
-            if(t.IsCompleted)
-            {
-                var album = t.Result;
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    DownloadsInProgress.Remove(DownloadsInProgress.FirstOrDefault(d => d.Contains(album.albumHash)));
-                    FinishedDownloads.Add(album.albumName);
-                });
-                notifier.ShowDownloadedNotification(album.albumName, album.imageCount);
-            }
+            notifier.ShowDownloadedNotification(albumDownload.AlbumName, albumDownload.ImageCount);
         }
 
         private bool IsImgurAlbumUrl(string candidate)
         {
             return (candidate.StartsWith("http") || candidate.StartsWith("https"))
-                && candidate.Contains("imgur.com") && 
+                && candidate.Contains("imgur.com") &&
                 (candidate.Contains("/a/") || candidate.Contains("/gallery/"));
-
         }
     }
 }
