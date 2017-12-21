@@ -61,7 +61,7 @@ namespace DownloaderHost
             if(t.IsCompleted)
             {
                 var album = t.Result;
-                notifier.ShowDownloadedNotification($"{album.albumName} ({album.imageCount} images)");
+                notifier.ShowDownloadedNotification(album.albumName, album.imageCount);
             }
         }
 

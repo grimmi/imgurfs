@@ -11,15 +11,23 @@ namespace DownloaderHost.Toasts
         public event PropertyChangedEventHandler PropertyChanged;
 
         private string message;
-        public string Message
+        public string Album
         {
             get { return message; }
-            set { message = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Message))); }
+            set { message = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Album))); }
         }
 
-        public DownloadedNotification(string url)
+        private int imageCount;
+        public int ImageCount
         {
-            Message = $"finished downloading {url}...";
+            get { return imageCount; }
+            set { imageCount = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ImageCount))); }
+        }
+
+        public DownloadedNotification(string albumName, int imageCount)
+        {
+            Album = albumName;
+            ImageCount = imageCount;
         }
     }
 }

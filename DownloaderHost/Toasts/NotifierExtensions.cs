@@ -9,9 +9,9 @@ namespace DownloaderHost.Toasts
             notifier.Notify<DownloadNotification>(() => new DownloadNotification(message));
         }
 
-        public static void ShowDownloadedNotification(this Notifier notifier, string message)
+        public static void ShowDownloadedNotification(this Notifier notifier, string album, int imageCount)
         {
-            notifier.Notify<DownloadedNotification>(() => new DownloadedNotification(message));
+            notifier.Notify<DownloadedNotification>(() => new DownloadedNotification(album, imageCount));
         }
     }
 }

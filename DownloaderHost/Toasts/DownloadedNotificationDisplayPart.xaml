@@ -12,9 +12,20 @@
             <ColumnDefinition Width="50"></ColumnDefinition>
             <ColumnDefinition Width="auto"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <Image Source="/DownloaderHost;component/Resources/downloaded.png" Grid.Column="0" />
-        <TextBlock 
-            Grid.Column="1"
-            Text="{Binding Message}" FontWeight="Light" Foreground="White" Grid.Row="1" TextWrapping="Wrap" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Image Source="/DownloaderHost;component/Resources/downloaded.png" Grid.Column="0" Grid.Row="0" Grid.RowSpan="3"/>
+        <TextBlock Grid.Column="1" Grid.Row="0">Album finished downloading:</TextBlock>
+        <TextBlock Grid.Column="1" Grid.Row="1">
+            <Run>Name: </Run>
+            <Run Text="{Binding Album}" />
+        </TextBlock>
+        <TextBlock Grid.Column="1" Grid.Row="2">
+            <Run>Images: </Run>
+            <Run Text="{Binding ImageCount}" />
+        </TextBlock>
     </Grid>
 </core:NotificationDisplayPart>
