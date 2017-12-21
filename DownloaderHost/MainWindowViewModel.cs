@@ -45,7 +45,7 @@ namespace DownloaderHost
             {
                 DownloadUrls.Add(clipboardText);
                 var albumHash = clipboardText.Split('/').Last();
-                var albumTask = Task.Run(() => { AlbumDownloader.DownloadAlbum(albumHash, @"c:\temp\cbdownload"); return albumHash; });
+                var albumTask = Task.Run(() => { var result = AlbumDownloader.DownloadAlbum(albumHash, @"c:\temp\cbdownload"); return (albumName: result.Item1, imageCount: result.Item2); });
                 albumTask.ContinueWith(NotifyCompletion);
                 ShowToast(clipboardText);
             }
@@ -56,12 +56,12 @@ namespace DownloaderHost
             notifier.ShowDownloadNotification(dlUrl);
         }
 
-        private void NotifyCompletion(Task<string> t)
+        private void NotifyCompletion(Task<(string albumName, int imageCount)> t)
         {
             if(t.IsCompleted)
             {
                 var album = t.Result;
-                notifier.ShowDownloadedNotification(album);
+                notifier.ShowDownloadedNotification($"{album.albumName} ({album.imageCount} images)");
             }
         }
 

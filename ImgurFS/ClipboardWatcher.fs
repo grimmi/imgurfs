@@ -35,7 +35,7 @@ module ClipboardWatcher =
         let ReactToClipboard =
             match CheckForImgurUrl(Clipboard.GetText()) with
             |"" -> ()
-            |url -> url |> ExtractAlbumHashFromUrl |> DownloadAlbum @"c:\temp\fsdownloadr"
+            |url -> url |> ExtractAlbumHashFromUrl |> DownloadAlbum @"c:\temp\fsdownloadr" |> ignore
 
         override this.WndProc(message : System.Windows.Forms.Message byref) =
             match message.Msg with
