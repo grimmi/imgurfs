@@ -5,16 +5,23 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:core="clr-namespace:ToastNotifications.Core;assembly=ToastNotifications"
-             mc:Ignorable="d"  Background="Gray"
+             mc:Ignorable="d"  Background="#CFD8DC"
              d:DesignHeight="60" d:DesignWidth="250">
     <Grid  Margin="5">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="50"></ColumnDefinition>
             <ColumnDefinition Width="auto"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <Image Source="/DownloaderHost;component/Resources/info.png" Grid.Column="0" />
-        <TextBlock 
-            Grid.Column="1"
-            Text="{Binding Message}" FontWeight="Light" Foreground="White" Grid.Row="1" TextWrapping="Wrap" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Image Source="/DownloaderHost;component/Resources/info.png" Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" />
+        <TextBlock Grid.Column="1" Grid.Row="0" Foreground="#212121">Started downloading:</TextBlock>
+        <TextBlock Grid.Column="1" Grid.Row="1">
+            <Run Foreground="#212121">Url: </Run>
+            <Run Text="{Binding Path=AlbumUrl, FallbackValue=https://www.imgur.com/a/HALLO}" Foreground="#757575"/>
+        </TextBlock>
     </Grid>
 </core:NotificationDisplayPart>

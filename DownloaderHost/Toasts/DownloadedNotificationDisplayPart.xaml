@@ -5,7 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:core="clr-namespace:ToastNotifications.Core;assembly=ToastNotifications"
-             mc:Ignorable="d"  Background="Gray"
+             mc:Ignorable="d"  Background="#CFD8DC"
              d:DesignHeight="60" d:DesignWidth="250">
     <Grid  Margin="5">
         <Grid.ColumnDefinitions>
@@ -17,15 +17,15 @@
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
-        <Image Source="/DownloaderHost;component/Resources/downloaded.png" Grid.Column="0" Grid.Row="0" Grid.RowSpan="3"/>
-        <TextBlock Grid.Column="1" Grid.Row="0">Album finished downloading:</TextBlock>
+        <Image Source="/DownloaderHost;component/Resources/downloaded.png" Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" />
+        <TextBlock Grid.Column="1" Grid.Row="0" Foreground="#212121">Album finished downloading:</TextBlock>
         <TextBlock Grid.Column="1" Grid.Row="1">
-            <Run>Name: </Run>
-            <Run Text="{Binding Album}" />
+            <Run Foreground="#212121">Name: </Run>
+            <Run Text="{Binding Path=Album, FallbackValue=AlbumName}" Foreground="#757575"/>
         </TextBlock>
         <TextBlock Grid.Column="1" Grid.Row="2">
-            <Run>Images: </Run>
-            <Run Text="{Binding ImageCount}" />
+            <Run Foreground="#212121">Images: </Run>
+            <Run Text="{Binding ImageCount, FallbackValue=13}" Foreground="#757575" />
         </TextBlock>
     </Grid>
 </core:NotificationDisplayPart>

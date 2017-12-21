@@ -10,16 +10,16 @@ namespace DownloaderHost.Toasts
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private string message;
-        public string Message
+        private string albumUrl;
+        public string AlbumUrl
         {
-            get { return message; }
-            set { message = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Message))); }
+            get { return albumUrl; }
+            set { albumUrl = value; PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AlbumUrl))); }
         }
 
         public DownloadNotification(string url)
         {
-            Message = $"now downloading {url}...";
+            AlbumUrl = url;
         }
     }
 }
