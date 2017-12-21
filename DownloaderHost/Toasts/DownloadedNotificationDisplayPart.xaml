@@ -1,4 +1,4 @@
-﻿<core:NotificationDisplayPart x:Class="DownloaderHost.Toasts.DownloadNotificationDisplayPart" 
+﻿<core:NotificationDisplayPart x:Class="DownloaderHost.Toasts.DownloadedNotificationDisplayPart" 
              xmlns:local="clr-namespace:DownloaderHost.Toasts"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -12,7 +12,7 @@
             <ColumnDefinition Width="50"></ColumnDefinition>
             <ColumnDefinition Width="auto"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <Image Source="/DownloaderHost;component/Resources/info.png" Grid.Column="0" />
+        <Image Source="/DownloaderHost;component/Resources/downloaded.png" Grid.Column="0" />
         <TextBlock 
             Grid.Column="1"
             Text="{Binding Message}" FontWeight="Light" Foreground="White" Grid.Row="1" TextWrapping="Wrap" />

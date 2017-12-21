@@ -34,7 +34,7 @@ namespace DownloaderHost
                     maximumNotificationCount: MaximumNotificationCount.FromCount(2));
                 cfg.Dispatcher = Application.Current.Dispatcher;
                 cfg.DisplayOptions.TopMost = true;
-                cfg.DisplayOptions.Width = 250;
+                cfg.DisplayOptions.Width = 300;
             });
         }
 
@@ -61,7 +61,7 @@ namespace DownloaderHost
             if(t.IsCompleted)
             {
                 var album = t.Result;
-                MessageBox.Show($"album {album} finished downloading");
+                notifier.ShowDownloadedNotification(album);
             }
         }
 

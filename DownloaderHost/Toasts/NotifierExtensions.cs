@@ -8,5 +8,10 @@ namespace DownloaderHost.Toasts
         {
             notifier.Notify<DownloadNotification>(() => new DownloadNotification(message));
         }
+
+        public static void ShowDownloadedNotification(this Notifier notifier, string message)
+        {
+            notifier.Notify<DownloadedNotification>(() => new DownloadedNotification(message));
+        }
     }
 }
