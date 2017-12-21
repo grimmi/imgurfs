@@ -15,7 +15,6 @@ namespace DownloaderHost
         private static void OnClipboardContentChanged(EventArgs e)
         {
             ClipboardContentChanged?.Invoke(null, e);
-            Console.WriteLine(System.Windows.Clipboard.GetText());
         }
 
         private class MonitorForm : Form
@@ -34,6 +33,12 @@ namespace DownloaderHost
                 }
                 base.WndProc(ref m);
             }
+        }
+
+        public static void Shutdown()
+        {
+            monitorForm.Dispose();
+            monitorForm = null;
         }
     }
 

@@ -14,10 +14,13 @@ namespace DownloaderHost
 {
     public class MainWindowViewModel
     {
-        public ObservableCollection<string> DownloadUrls { get; } = new ObservableCollection<string>();
+        public ObservableCollection<string> DownloadsInProgress { get; } = new ObservableCollection<string>();
+        public ObservableCollection<string> FinishedDownloads { get; } = new ObservableCollection<string>();
 
         private List<Task> runningTasks = new List<Task>();
         private Notifier notifier;
+
+        public string DownloadPath { get; set; } = @"c:\temp\downloader";
 
         public MainWindowViewModel()
         {
@@ -41,11 +44,15 @@ namespace DownloaderHost
         public void ReactToClipboardChange()
         {
             var clipboardText = Clipboard.GetText();
-            if(!DownloadUrls.Contains(clipboardText) && IsImgurAlbumUrl(clipboardText))
+            if(!DownloadsInProgress.Contains(clipboardText) && IsImgurAlbumUrl(clipboardText))
             {
-                DownloadUrls.Add(clipboardText);
+                DownloadsInProgress.Add(clipboardText);
                 var albumHash = clipboardText.Split('/').Last();
-                var albumTask = Task.Run(() => { var result = AlbumDownloader.DownloadAlbum(albumHash, @"c:\temp\cbdownload"); return (albumName: result.Item1, imageCount: result.Item2); });
+                var albumTask = Task.Run(() => 
+                {
+                    var result = AlbumDownloader.DownloadAlbum(albumHash, DownloadPath);
+                    return (albumHash: albumHash, albumName: result.Item1, imageCount: result.Item2);
+                });
                 albumTask.ContinueWith(NotifyCompletion);
                 ShowToast(clipboardText);
             }
@@ -56,11 +63,16 @@ namespace DownloaderHost
             notifier.ShowDownloadNotification(dlUrl);
         }
 
-        private void NotifyCompletion(Task<(string albumName, int imageCount)> t)
+        private void NotifyCompletion(Task<(string albumHash, string albumName, int imageCount)> t)
         {
             if(t.IsCompleted)
             {
                 var album = t.Result;
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    DownloadsInProgress.Remove(DownloadsInProgress.FirstOrDefault(d => d.Contains(album.albumHash)));
+                    FinishedDownloads.Add(album.albumName);
+                });
                 notifier.ShowDownloadedNotification(album.albumName, album.imageCount);
             }
         }

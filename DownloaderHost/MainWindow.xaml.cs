@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.Windows;
 
 namespace DownloaderHost
 {
@@ -11,6 +12,12 @@ namespace DownloaderHost
         {
             DataContext = new MainWindowViewModel();
             InitializeComponent();
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            ClipboardMonitor.Shutdown();
+            base.OnClosing(e);
         }
     }
 }
