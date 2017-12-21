@@ -27,7 +27,7 @@ namespace DownloaderHost
                 cfg.PositionProvider = new PrimaryScreenPositionProvider(
                     corner: Corner.BottomRight,
                     offsetX: 10,
-                    offsetY: 10
+                    offsetY: 75
                 );
                 cfg.LifetimeSupervisor = new TimeAndCountBasedLifetimeSupervisor(
                     notificationLifetime: TimeSpan.FromSeconds(5),
