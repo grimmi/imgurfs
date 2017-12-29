@@ -56,7 +56,7 @@ namespace DownloaderHost
         public void ReactToClipboardChange()
         {
             var clipboardText = Clipboard.GetText();
-            if (!Downloads.Any(dl => clipboardText.Contains(dl.AlbumUrl)) && IsImgurAlbumUrl(clipboardText))
+            if (!Downloads.Any(dl => clipboardText.Contains(dl.AlbumHash)) && IsImgurAlbumUrl(clipboardText))
             {
                 var albumHash = clipboardText.Split('/').Last();
                 var downloadTask = Task.Run(() =>
