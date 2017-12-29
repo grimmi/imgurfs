@@ -55,6 +55,17 @@ namespace DownloaderHost
             }
         }
 
+        private bool _downloading;
+        public bool Downloading
+        {
+            get { return _downloading; }
+            set
+            {
+                _downloading = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Downloading)));
+            }
+        }
+
         public string ImageCountDisplay
         {
             get
@@ -79,6 +90,7 @@ namespace DownloaderHost
             _albumHash = albumHash;
             _downloadTask = downloadTask;
             _downloadTask.ContinueWith(result => UpdateModel(result));
+            Downloading = true;
             _onComplete = onComplete;
         }
 
@@ -87,7 +99,7 @@ namespace DownloaderHost
             var result = finishedTask.Result;
             AlbumName = result.albumName;
             ImageCount = result.imageCount;
-
+            Downloading = false;
             _onComplete?.Invoke(this);
         }
     }
