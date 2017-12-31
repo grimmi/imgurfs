@@ -56,16 +56,29 @@ namespace DownloaderHost
         public void ReactToClipboardChange()
         {
             var clipboardText = Clipboard.GetText();
-            if (!Downloads.Any(dl => clipboardText.Contains(dl.AlbumHash)) && IsImgurAlbumUrl(clipboardText))
+            if (!Downloads.Any(dl => clipboardText.Contains(dl.AlbumHash)))
             {
-                var albumHash = clipboardText.Split('/').Last();
-                var downloadTask = Task.Run(() =>
+                var imgurHash = clipboardText.Split('/').Last();
+                if (IsImgurAlbumUrl(clipboardText))
                 {
-                    var result = AlbumDownloader.DownloadAlbum(albumHash, DownloadPath);
-                    return (albumName: result.Item1, imageCount: result.Item2);
-                });
-                var model = new AlbumDownloadViewModel(albumHash, downloadTask, NotifyCompletion);
-                Downloads.Add(model);
+                    var downloadTask = Task.Run(() =>
+                    {
+                        var result = AlbumDownloader.DownloadAlbum(imgurHash, DownloadPath);
+                        return (albumName: result.Item1, imageCount: result.Item2);
+                    });
+                    var model = new AlbumDownloadViewModel(imgurHash, downloadTask, NotifyCompletion);
+                    Downloads.Add(model);
+                }
+                else if(IsImgurImage(clipboardText))
+                {
+                    var downloadTask = Task.Run(() =>
+                    {
+                        var result = ImageDownloader.DownloadImageFromHash(imgurHash.Split('.').First(), DownloadPath);
+                        return (albumName: result.Item1, imageCount: result.Item2);
+                    });
+                    var model = new AlbumDownloadViewModel(imgurHash, downloadTask, NotifyCompletion);
+                    Downloads.Add(model);
+                }
                 ShowToast(clipboardText);
             }
         }
@@ -85,6 +98,12 @@ namespace DownloaderHost
             return (candidate.StartsWith("http") || candidate.StartsWith("https"))
                 && candidate.Contains("imgur.com") &&
                 (candidate.Contains("/a/") || candidate.Contains("/gallery/"));
+        }
+
+        private bool IsImgurImage(string candidate)
+        {
+            return (candidate.StartsWith("http") || candidate.StartsWith("https"))
+                && candidate.Contains("imgur.com") && !IsImgurAlbumUrl(candidate);
         }
     }
 }
