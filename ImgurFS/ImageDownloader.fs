@@ -23,7 +23,7 @@ module ImageDownloader =
         use imageStream = File.Create(imagePath)
         image.ResponseStream.CopyTo(imageStream)
 
-        (imageHash, 1)
+        imageName
 
        
         
