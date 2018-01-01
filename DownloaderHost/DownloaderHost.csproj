@@ -70,6 +70,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AlbumDownloadViewModel.cs" />
+    <Compile Include="DownloadViewModel.cs" />
+    <Compile Include="ImageDownloadViewModel.cs" />
     <Compile Include="Toasts\DownloadedNotification.cs" />
     <Compile Include="Toasts\DownloadedNotificationDisplayPart.xaml.cs">
       <DependentUpon>DownloadedNotificationDisplayPart.xaml</DependentUpon>

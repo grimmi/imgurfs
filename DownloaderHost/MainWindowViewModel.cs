@@ -16,13 +16,13 @@ namespace DownloaderHost
 {
     public class MainWindowViewModel
     {
-        public ObservableCollection<AlbumDownloadViewModel> Downloads { get; } = new ObservableCollection<AlbumDownloadViewModel>();
+        public ObservableCollection<DownloadViewModel> Downloads { get; } = new ObservableCollection<DownloadViewModel>();
 
         private List<Task> runningTasks = new List<Task>();
         private Notifier notifier;
 
         public string DownloadPath { get; set; } = @"c:\temp\downloader";
-        public AlbumDownloadViewModel SelectedDownload { get; set; }
+        public DownloadViewModel SelectedDownload { get; set; }
 
         public MainWindowViewModel()
         {
@@ -49,14 +49,14 @@ namespace DownloaderHost
             {
                 return;
             }
-            var path = Path.Combine(DownloadPath, SelectedDownload.AlbumName);
+            var path = Path.GetDirectoryName(Path.Combine(DownloadPath, SelectedDownload.GetPath()));
             Process.Start(path);
         }
 
         public void ReactToClipboardChange()
         {
             var clipboardText = Clipboard.GetText();
-            if (!Downloads.Any(dl => clipboardText.Contains(dl.AlbumHash)))
+            if (!Downloads.Any(dl => clipboardText.Contains(dl.DownloadHash)))
             {
                 var imgurHash = clipboardText.Split('/').Last();
                 if (IsImgurAlbumUrl(clipboardText))
@@ -66,7 +66,7 @@ namespace DownloaderHost
                         var result = AlbumDownloader.DownloadAlbum(imgurHash, DownloadPath);
                         return (albumName: result.Item1, imageCount: result.Item2);
                     });
-                    var model = new AlbumDownloadViewModel(imgurHash, downloadTask, NotifyCompletion);
+                    var model = new AlbumDownloadViewModel(imgurHash, downloadTask, NotifyAlbumCompletion);
                     Downloads.Add(model);
                 }
                 else if(IsImgurImage(clipboardText))
@@ -74,9 +74,9 @@ namespace DownloaderHost
                     var downloadTask = Task.Run(() =>
                     {
                         var result = ImageDownloader.DownloadImageFromHash(imgurHash.Split('.').First(), DownloadPath);
-                        return (albumName: result.Item1, imageCount: result.Item2);
+                        return result;
                     });
-                    var model = new AlbumDownloadViewModel(imgurHash, downloadTask, NotifyCompletion);
+                    var model = new ImageDownloadViewModel(imgurHash, downloadTask, NotifyImageCompletion);
                     Downloads.Add(model);
                 }
                 ShowToast(clipboardText);
@@ -88,9 +88,14 @@ namespace DownloaderHost
             notifier.ShowDownloadNotification(dlUrl);
         }
 
-        private void NotifyCompletion(AlbumDownloadViewModel albumDownload)
+        private void NotifyAlbumCompletion(AlbumDownloadViewModel albumDownload)
         {
             notifier.ShowDownloadedNotification(albumDownload.AlbumName, albumDownload.ImageCount);
+        }
+
+        private void NotifyImageCompletion(ImageDownloadViewModel imageDownload)
+        {
+            notifier.ShowDownloadedNotification(imageDownload.ImageName, 1);
         }
 
         private bool IsImgurAlbumUrl(string candidate)
