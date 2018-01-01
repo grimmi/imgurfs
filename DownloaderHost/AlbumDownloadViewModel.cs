@@ -4,9 +4,11 @@ using System.Threading.Tasks;
 
 namespace DownloaderHost
 {
-    public class AlbumDownloadViewModel : INotifyPropertyChanged
+    public class AlbumDownloadViewModel : DownloadViewModel, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public override string DownloadHash => AlbumHash;
 
         private string _albumHash;
         public string AlbumHash
@@ -74,7 +76,7 @@ namespace DownloaderHost
             }
         }
 
-        public string Title
+        public override string Title
         {
             get
             {
@@ -101,6 +103,11 @@ namespace DownloaderHost
             ImageCount = result.imageCount;
             Downloading = false;
             _onComplete?.Invoke(this);
+        }
+
+        public override string GetPath()
+        {
+            return AlbumName;
         }
     }
 }
